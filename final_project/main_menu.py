@@ -1,16 +1,47 @@
+import sys
 import time
+import threading
 import os
+
+# Global flag
+_skip_event = threading.Event()
+
+def _key_listener():
+    """Runs in background — sets the event when any key is pressed"""
+    try:
+        input()                    # Blocks until Enter is pressed
+        _skip_event.set()          # Tell the main thread: "SKIP!"
+    except EOFError:
+        pass
+
+def slow_print(text, delay=0.03, end='\n'):
+    """
+    Prints text slowly.
+    Player can press Enter (or any key) to instantly finish the current line.
+    Works perfectly on Linux/Mac/WSL/Windows without hanging.
+    """
+    global _skip_event
+    _skip_event.clear()
+
+    # Start background listener
+    listener = threading.Thread(target=_key_listener, daemon=True)
+    listener.start()
+
+    printed = 0
+    for i, char in enumerate(text):
+        if _skip_event.is_set():
+            # Dump the rest instantly
+            print(text[printed:] + end, end='', flush=True)
+            return
+        print(char, end='', flush=True)
+        printed += 1
+        time.sleep(delay)
+
+    print(end=end)
 
 def clear_screen():
 
     os.system('cls' if os.name == 'nt' else 'clear')
-
-def slow_print(text, delay=0.1):
-    """Print text slowly for dramatic effect."""
-    for char in text:
-        print(char, end='', flush=True)
-        time.sleep(delay)
-    print() 
 
 def show_intro():
     clear_screen()
@@ -35,8 +66,15 @@ def main_menu():
 
     choice = input("Select an option: ")
     return choice
-
-
+def scene_1():
+    slow_print('''
+        "The onsen were lovely, don't you think?" okāsan asked.
+        And it had been. The hot springs had revitalized my spirits
+        and I was eager to return home. After a quiet retreat
+        to the neighboring Arashiyama, I seemed to be the only one among us
+        who felt that way. How easy life could have been if we had stayed forever...
+    ''' )
+    return
 # ---------- GAME LOOP STARTS HERE ----------
 if __name__ == "__main__":
     show_intro()
@@ -46,6 +84,8 @@ if __name__ == "__main__":
 
         if choice == "1":
             print("Starting a new journey...")
+            clear_screen()
+            scene_1()
             # start_new_game()
             break
         elif choice == "2":
@@ -65,3 +105,4 @@ if __name__ == "__main__":
         else:
             print("Please enter a valid option.")
             time.sleep(1)
+
