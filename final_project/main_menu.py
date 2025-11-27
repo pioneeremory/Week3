@@ -2,6 +2,7 @@ import sys
 import time
 import threading
 import os
+import scenes.py
 
 # Global flag
 _skip_event = threading.Event()
@@ -66,15 +67,44 @@ def main_menu():
 
     choice = input("Select an option: ")
     return choice
-def scene_1():
-    slow_print('''
-        "The onsen were lovely, don't you think?" okāsan asked.
-        And it had been. The hot springs had revitalized my spirits
-        and I was eager to return home. After a quiet retreat
-        to the neighboring Arashiyama, I seemed to be the only one among us
-        who felt that way. How easy life could have been if we had stayed forever...
-    ''' )
-    return
+
+def play_scenes(start_scene_id):
+    current_scene_id = start_scene_id
+
+    while True:
+        scene = scenes[current_scene_id]
+        print('\n' + "=" * 50)
+        scene.display()
+        print()
+
+        if len(scene.choices) == 1 and scene.choices[0].next_scene_id == "End":
+            input('\n Press ENTER to return to the main menu...')
+            break
+
+        player_input = input('\n Choose an option: ').strip()
+
+        chosen = None
+
+        for choice in scene.choices:
+                if choice.key == player_input:
+                    chosen = choice
+                    break
+        if not chosen:
+            print('Please choose a valid option')
+        
+        if chosen.next_scene_id == "END":
+            print("\nThe story will continue in a future chapter...")
+            input("\nPress ENTER to return to the main menu...")
+            break
+        else:
+            current_scene_id = chosen.next_scene_id
+
+
+def start_new_game():
+    create_scenes()
+    play_scenes("approach_kyoto")
+
+
 # ---------- GAME LOOP STARTS HERE ----------
 if __name__ == "__main__":
     show_intro()
@@ -85,7 +115,7 @@ if __name__ == "__main__":
         if choice == "1":
             print("Starting a new journey...")
             clear_screen()
-            scene_1()
+            play_scenes(scene1)
             # start_new_game()
             break
         elif choice == "2":
