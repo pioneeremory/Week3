@@ -10,8 +10,9 @@ class BoggleBoard:
     ____\n""")
     def dice_picker(self):
         dice_list = []
+        dice = 
         for i in dice_list:
-            dice_list.append(i)
+            dice_list.append(i, ",")
         print(dice_list)
 
     def shake(self):

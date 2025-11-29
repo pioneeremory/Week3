@@ -1,0 +1,41 @@
+from os import name
+class LibraryUser()
+def __init__(self, username, email):
+    self.username = username
+    self.email = email
+    self.has_book = False
+    self.borrowed_book = None
+
+def borrow_book(self, book):
+    self.book = book
+
+    if self.has_book:
+        print('You cannot checkout more than one book')
+    else: 
+        self.has_book == True
+        print('You checked out the book')
+        self.borrowed_book = book
+        book_title = book.title
+        print(f'You have checked out {book_title}')
+
+class Book:
+
+def __init__(self, title, author):
+    self.title = title
+    self.author = author
+
+@classmethod
+def create_book(cls, new_title, new_author):
+    self.new_title = new_title
+    self.new_author = new_author
+    # user_book = 
+    # user_title = 
+    return cls(new_title, new_author)
+
+
+
+user_book = create_book("", "")
+print(create_book(user_book))
+
+#class method to create book
+testbook = Book.create_book("test", "test")
